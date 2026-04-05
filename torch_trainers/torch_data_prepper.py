@@ -10,13 +10,14 @@ from tqdm import tqdm
 
 def generate_dataloaders(train_path, 
                          test_path, 
-                         transform,
+                         train_transform,
+                         test_transform,
                          batch_size,
                          num_workers=4):
 
     
-    train_dataset = datasets.ImageFolder(train_path, transform=transform)
-    test_dataset = datasets.ImageFolder(test_path, transform=transform)
+    train_dataset = datasets.ImageFolder(train_path, transform=train_transform)
+    test_dataset = datasets.ImageFolder(test_path, transform=test_transform)
     
     train_dataloader = DataLoader(
         dataset=train_dataset,
