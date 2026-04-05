@@ -1,6 +1,51 @@
 from tqdm.auto import tqdm
 import torch
+import pandas as pd
+import copy
 
+# Custom Early Stopper with restore best weights
+class EarlyStopping:
+    def __init__(
+        self,
+        patience = 5,
+        mode="min",
+        restore_best_weights=True
+    ):
+        
+        self.patience = patience
+        self.mode = mode
+        self.restore_best_weights = restore_best_weights
+        
+        self.best_score = None
+        self.best_state_dict = None
+        self.counter = 0
+        self.early_stop = False
+        
+        if mode not in ["min", "max"]:
+            raise ValueError("mode must be one of 'min' or 'max'")
+        
+    def _is_improvement(self, current_score):
+        if self.best_score is None:
+            return True
+        
+        if self.mode == "min":
+            return current_score < self.best_score
+        else:
+            return current_score > self.best_score
+    
+    def __call__(self, current_score, model):
+        if self._is_improvement(current_score):
+            self.best_score = current_score
+            self.counter = 0
+            if self.restore_best_weights:
+                self.best_state_dict = copy.deepcopy(model.state_dict())
+        else:
+            self.counter += 1
+            if self.counter >= self.patience:
+                self.early_stop = True
+                if self.restore_best_weights and self.best_state_dict is not None:
+                    model.load_state_dict(self.best_state_dict)
+        
 def train_step(model, 
                dataloader, 
                loss_fn, 
@@ -66,8 +111,14 @@ def main_trainer(model,
                  optimizer,
                  loss_fn,
                  total_epochs: int = 5,
-                 device='cpu'):
-    
+                 device='cpu',
+                 early_stopper=None):
+    history = {
+        'train_acc': [],
+        'train_loss': [],
+        'test_acc': [],
+        'test_loss': []
+    }
     for epoch in range(total_epochs):
         # Train Step
         train_loss, train_acc = train_step(
@@ -85,9 +136,23 @@ def main_trainer(model,
             loss_fn=loss_fn,
             device=device
         )
+        history['train_acc'].append(round(train_acc,4))
+        history['train_loss'].append(round(train_loss,4))
+        history['test_acc'].append(round(test_acc,4))
+        history['test_loss'].append(round(test_loss,4))
         
          # Print results
         print(f"Epoch: {epoch+1}")
         print(f"Train_loss: {train_loss: .4f}, Train_acc: {train_acc: .4f} | Test_loss: {test_loss: .4f}, Test_acc: {test_acc: .4f}")
         print('='*80)
         print()
+       
+        ## Early Stopper
+        if early_stopper is not None:
+            early_stopper(test_loss, model)
+            if early_stopper.early_stop:
+                print("Early stopping triggered.")
+                break
+            
+    df = pd.DataFrame(history)
+    return df
