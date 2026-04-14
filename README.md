@@ -30,14 +30,16 @@ DS8013_Project/
 
 ## 🔧 Environment Requirents
 - Python >= 3.14.3
-- All packages needed are in requirements.txt
+- All packages needed are in [requirements.txt](requirements.txt)
 
 Run the following to install required libraries
 ```python
 pip install -r requirements.txt
 ```
 
-The dataset is around 3.4GB, so its too big to add to github, you can download it from here:
+The dataset is around 3GB, so its too big to add to github, you can download it from here:
+
+[DOWNLOAD DATASET](https://drive.google.com/file/d/1LjkxB4WCCUoc3FxLG9s7tAviPRXQuaTL/view?usp=drive_link)
 
 
 **Models were trained using PyTorch**
@@ -51,30 +53,30 @@ https://pytorch.org/get-started/locally/
 ### SRC (Python source files)
 
 #### Analysis
-plotter.py 
+[plotter.py](src\analysis\plotter.py)
 - Visualization scripts that creates the comparisons of each model agaisnt various hyperparameters of dropout and weight decay.
 
 #### 🤖 torch_trainers
-torch_custom_models.py
+[torch_custom_models.py](src\torch_trainers\torch_custom_models.py)
 - Contains the 3 models that freezes all weights and adds a classification head. Only the classification head is trained.
 
-torch_data_prepper.py
+[torch_data_prepper.py](src\torch_trainers\torch_data_prepper.py)
 - Dataset loading, and dataloader generation
 
-train_all_models.py
+[train_all_models.py](src\torch_trainers\train_all_models.py)
 - Function that trains all models that utilizes the training loop.
 
-training_loop.py
+[training_loop.py](src\torch_trainers\training_loop.py)
 - The core training engine that contaisn the training step, testing step, and the combined full training loop.
 
 ### 🌄 viz
 Output graphs of visualizations
  - contains the comparisons of the various effects of the hyperparameters on model accuracy and loss.
 
-### 📓 Results_analysis.ipynb
+### 📓 [Results_analysis.ipynb](Results_analysis.ipynb)
 - Jupyter notebook that runs the analysis scrips for easy execution.
 
-### 📓 Train_notebook.ipynb
+### 📓 [Train_notebook.ipynb](Train_notebook.ipynb)
 - Jupyter notebook that runs the execution of all the model training.
 
 ***WARNING: MODEL TRAINING TAKES A LONG TIME***
