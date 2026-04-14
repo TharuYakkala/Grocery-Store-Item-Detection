@@ -1,0 +1,1 @@
+from .torch_trainers.train_all_models import train_all
