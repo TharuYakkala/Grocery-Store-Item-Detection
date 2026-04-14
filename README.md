@@ -1,4 +1,4 @@
-# DS8013_Project
+# Grocery-Store-Item-Detection
 ![python](https://img.shields.io/badge/python-3.14.3%2B-blue)
 ## 📋 SUMMARY
 
